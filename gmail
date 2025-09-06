@@ -1,0 +1,224 @@
+(function() {
+    // Create and show a beautiful UI popup for email and ID input
+    function showCustomPopup() {
+        // Get saved values
+        const savedEmail = localStorage.getItem('myEmail') || 'example@gmail.com';
+        const savedId = localStorage.getItem('myId') || '12345678';
+        
+        // Remove any existing popup
+        const existingPopup = document.getElementById('jisanx-custom-popup');
+        if (existingPopup) existingPopup.remove();
+        
+        // Create popup container with RGB animation
+        const popup = document.createElement('div');
+        popup.id = 'jisanx-custom-popup';
+        popup.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 350px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(103, 232, 249, 0.3);
+            z-index: 999999;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
+            animation: rgbBorder 3s infinite;
+        `;
+        
+        // Add animation style
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes rgbBorder {
+                0% { box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 0, 0, 0.5); }
+                33% { box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 255, 0, 0.5); }
+                66% { box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 0, 255, 0.5); }
+                100% { box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 0, 0, 0.5); }
+            }
+            
+            #jisanx-custom-popup input {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: none;
+                border-radius: 5px;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                font-size: 16px;
+                transition: all 0.3s;
+                border: 1px solid rgba(103, 232, 249, 0.3);
+            }
+            
+            #jisanx-custom-popup input:focus {
+                outline: none;
+                background: rgba(255, 255, 255, 0.2);
+                border: 1px solid rgba(103, 232, 249, 0.8);
+                box-shadow: 0 0 8px rgba(103, 232, 249, 0.5);
+            }
+            
+            #jisanx-custom-popup button {
+                background: linear-gradient(to right, #0072ff, #00c6ff);
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s;
+                margin-top: 10px;
+                width: 100%;
+            }
+            
+            #jisanx-custom-popup button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+            }
+            
+            .social-info {
+                margin-top: 15px;
+                text-align: center;
+                font-size: 12px;
+                opacity: 0.8;
+            }
+            
+            .social-info a {
+                color: #00c6ff;
+                text-decoration: none;
+            }
+            
+            .popup-title {
+                font-size: 20px;
+                margin-bottom: 15px;
+                text-align: center;
+                background: linear-gradient(to right, #00c6ff, #0072ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                font-weight: bold;
+            }
+            
+            .popup-logo {
+                text-align: center;
+                margin-bottom: 10px;
+                font-size: 28px;
+                font-weight: bold;
+                background: linear-gradient(to right, #ff00cc, #3333ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        `;
+        
+        document.head.appendChild(style);
+        
+        // Popup content
+        popup.innerHTML = `
+            <div class="popup-logo">JX</div>
+            <div class="popup-title">Email & ID Changer</div>
+            <div>
+                <label for="custom-email">Email:</label>
+                <input type="text" id="custom-email" value="${savedEmail}" placeholder="Enter email">
+            </div>
+            <div>
+                <label for="custom-id">ID Number:</label>
+                <input type="text" id="custom-id" value="${savedId}" placeholder="Enter ID">
+            </div>
+            <button id="save-custom-data">Save Changes</button>
+            <div class="social-info">
+                Telegram: <a href="https://t.me/traderjisanx" target="_blank">@traderjisanx</a> | Developer: Jisan X
+            </div>
+        `;
+        
+        // Append popup to body
+        document.body.appendChild(popup);
+        
+        // Animate popup appearance
+        setTimeout(() => {
+            popup.style.opacity = '1';
+            popup.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 10);
+        
+        // Event listener for save button
+        document.getElementById('save-custom-data').addEventListener('click', function() {
+            const email = document.getElementById('custom-email').value;
+            const id = document.getElementById('custom-id').value;
+            
+            // Save to localStorage
+            localStorage.setItem('myEmail', email);
+            localStorage.setItem('myId', id);
+            
+            // Close popup with animation
+            popup.style.opacity = '0';
+            popup.style.transform = 'translate(-50%, -50%) scale(0.9)';
+            setTimeout(() => {
+                popup.remove();
+                
+                // Apply the changes immediately if dropdown is open
+                applyChangesToDropdown();
+            }, 300);
+        });
+        
+        // Close on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                popup.style.opacity = '0';
+                popup.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                setTimeout(() => popup.remove(), 300);
+            }
+        });
+    }
+    
+    // Function to apply changes to dropdown elements
+    function applyChangesToDropdown() {
+        const myEmail = localStorage.getItem('myEmail');
+        const myId = localStorage.getItem('myId');
+        
+        if (!myEmail || !myId) return;
+        
+        const emailEl = document.querySelector('.---react-features-Usermenu-Dropdown-styles-module__email--O_1r7');
+        const idEl = document.querySelector('.---react-features-Usermenu-Dropdown-styles-module__number--X0cBl');
+        
+        if (emailEl && idEl) {
+            emailEl.textContent = myEmail;
+            idEl.textContent = 'ID: ' + myId;
+        }
+    }
+    
+    // Watch for the dropdown to open
+    const targetNode = document.body;
+    const config = { attributes: true, attributeFilter: ['class'], subtree: true };
+    
+    const observer = new MutationObserver(function(mutations) {
+        for (const mutation of mutations) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                if (mutation.target.classList.contains('---react-features-Usermenu-styles-module__active--oVwC3') || 
+                    mutation.target.classList.contains('---react-features-Usermenu-Dropdown-styles-module__active--P5n2A')) {
+                    applyChangesToDropdown();
+                }
+            }
+        }
+    });
+    
+    observer.observe(targetNode, config);
+    
+    // Also add a direct event listener for clicks on the user menu
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.---react-features-Usermenu-styles-module__usermenu--rymiA')) {
+            setTimeout(applyChangesToDropdown, 10);
+        }
+    }, true);
+    
+    // Show the custom popup when the script is first run
+    showCustomPopup();
+    
+    // Add function to global scope so it can be called again if needed
+    window.showEmailIdChanger = showCustomPopup;
+    
+    // Initial check in case dropdown is already open
+    setTimeout(applyChangesToDropdown, 50);
+    
+    console.log('Beautiful Email & ID Changer by Jisan X activated!');
+    console.log('Telegram: @traderjisanx');
+})();
